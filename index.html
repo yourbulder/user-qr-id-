@@ -1,0 +1,566 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#123b5d">
+  <meta name="description" content="Digital ID profile and identity verification">
+  <title>Digital ID Verification</title>
+
+  <style>
+    :root {
+      --navy: #123b5d;
+      --blue: #24678c;
+      --ink: #183043;
+      --muted: #657786;
+      --border: #e1e9ef;
+      --background: #f1f5f9;
+      --green: #16804a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 24px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--background);
+      color: var(--ink);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .brand {
+      margin: 0 0 15px;
+      text-align: center;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .card {
+      overflow: hidden;
+      background: white;
+      border: 1px solid #dce5ec;
+      border-radius: 22px;
+      box-shadow: 0 12px 35px rgba(18, 59, 93, 0.10);
+    }
+
+    .header {
+      position: relative;
+      overflow: hidden;
+      padding: 25px 22px;
+      background: var(--navy);
+      color: white;
+    }
+
+    .header::after {
+      content: "";
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      right: -75px;
+      top: -75px;
+      border: 20px solid rgba(255,255,255,0.06);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .header-row {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      gap: 13px;
+      align-items: center;
+    }
+
+    .logo {
+      width: 49px;
+      height: 49px;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.11);
+      color: #f4d89b;
+      font-size: 19px;
+      font-weight: 900;
+    }
+
+    h1 {
+      margin: 0 0 5px;
+      font-size: 21px;
+      line-height: 1.2;
+    }
+
+    .header-subtitle {
+      margin: 0;
+      color: #d5e3ee;
+      font-size: 12px;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      position: relative;
+      z-index: 1;
+      margin-top: 20px;
+      padding: 7px 11px;
+      border: 1px solid #398c69;
+      border-radius: 30px;
+      background: rgba(22,128,74,0.20);
+      color: #d8ffea;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #62e6a1;
+    }
+
+    .content {
+      padding: 24px 22px;
+    }
+
+    .person {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 23px;
+      min-width: 0;
+    }
+
+    .photo,
+    .initials {
+      flex: 0 0 82px;
+      width: 82px;
+      height: 82px;
+      border-radius: 17px;
+      border: 1px solid var(--border);
+      background: #edf2f6;
+    }
+
+    .photo {
+      display: none;
+      object-fit: cover;
+    }
+
+    .initials {
+      display: grid;
+      place-items: center;
+      color: var(--navy);
+      font-size: 25px;
+      font-weight: 800;
+    }
+
+    .person-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .person-name {
+      margin: 0 0 7px;
+      font-size: 22px;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+    }
+
+    .person-id {
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .details {
+      border-top: 1px solid var(--border);
+    }
+
+    .detail {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .detail-label {
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .detail-value {
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 650;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .footer {
+      padding: 16px 20px 19px;
+      background: #fbfcfd;
+      border-top: 1px solid #edf1f4;
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .footer strong {
+      color: var(--navy);
+    }
+
+    .message {
+      padding: 38px 23px;
+      text-align: center;
+    }
+
+    .message-icon {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      background: #edf2f6;
+      color: var(--navy);
+      font-size: 25px;
+      font-weight: 800;
+    }
+
+    .message h2 {
+      margin: 0 0 9px;
+      font-size: 20px;
+    }
+
+    .message p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+      overflow-wrap: anywhere;
+    }
+
+    .retry {
+      margin-top: 18px;
+      padding: 11px 20px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--navy);
+      color: white;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 360px) {
+      body {
+        padding: 12px 8px;
+      }
+
+      .header {
+        padding: 21px 17px;
+      }
+
+      .content {
+        padding: 20px 17px;
+      }
+
+      .person-name {
+        font-size: 19px;
+      }
+
+      .photo,
+      .initials {
+        flex-basis: 68px;
+        width: 68px;
+        height: 68px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <p class="brand">Digital Identity System</p>
+
+    <section id="profileCard" class="card hidden">
+      <header class="header">
+        <div class="header-row">
+          <div class="logo">ID</div>
+          <div>
+            <h1>Digital ID Card</h1>
+            <p class="header-subtitle">Identity profile and verification</p>
+          </div>
+        </div>
+
+        <div class="status">
+          <span class="status-dot"></span>
+          Active · Verified
+        </div>
+      </header>
+
+      <div class="content">
+        <div class="person">
+          <img id="photo" class="photo" alt="ID holder">
+          <div id="initials" class="initials">ID</div>
+
+          <div class="person-info">
+            <h2 id="personName" class="person-name"></h2>
+            <div id="personId" class="person-id"></div>
+          </div>
+        </div>
+
+        <div class="details">
+          <div class="detail">
+            <div class="detail-label">Organization</div>
+            <div id="organization" class="detail-value"></div>
+          </div>
+
+          <div class="detail">
+            <div class="detail-label">ID Type</div>
+            <div id="type" class="detail-value"></div>
+          </div>
+
+          <div id="classRow" class="detail">
+            <div class="detail-label">Class / Department</div>
+            <div id="classDepartment" class="detail-value"></div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <strong>Digital ID Verification</strong><br>
+        This page displays public identity details only.
+      </footer>
+    </section>
+
+    <section id="messageCard" class="card" aria-live="polite">
+      <div class="message">
+        <div id="messageIcon" class="message-icon">…</div>
+        <h2 id="messageTitle">Checking ID</h2>
+        <p id="messageText">Connecting to the verification service.</p>
+        <button id="retryButton" class="retry hidden" type="button">
+          Try again
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Your actual Google Apps Script deployment URL.
+    const API_ENDPOINT =
+      'https://script.google.com/macros/s/AKfycbzCCgKXLueom3B_cdZnPV_0VjZ4UE4HgFNsRu0UqTI3TZ7MphM6LIbm4HwYc0gzimZq/exec';
+
+    const token =
+      new URLSearchParams(window.location.search).get('token') || '';
+
+    const messageCard = document.getElementById('messageCard');
+    const profileCard = document.getElementById('profileCard');
+    const retryButton = document.getElementById('retryButton');
+
+    let requestTimer = null;
+    let requestScript = null;
+    let requestId = 0;
+
+    function showMessage(icon, title, message, canRetry) {
+      document.getElementById('messageIcon').textContent = icon;
+      document.getElementById('messageTitle').textContent = title;
+      document.getElementById('messageText').textContent = message;
+
+      retryButton.classList.toggle('hidden', !canRetry);
+      messageCard.classList.remove('hidden');
+      profileCard.classList.add('hidden');
+    }
+
+    function setText(id, value, fallback) {
+      document.getElementById(id).textContent =
+        value || fallback || '—';
+    }
+
+    function getInitials(name) {
+      return String(name || 'ID')
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .map(function (part) {
+          return part.charAt(0);
+        })
+        .join('')
+        .toUpperCase();
+    }
+
+    function showProfile(data) {
+      if (!data || data.ok !== true || !data.person) {
+        showMessage(
+          '!',
+          'ID Not Verified',
+          (data && data.message) ||
+            'This ID could not be verified. Contact the issuing organization.',
+          false
+        );
+        return;
+      }
+
+      const person = data.person;
+
+      setText('personName', person.name, 'Unnamed');
+      setText('personId', person.uniqueId, 'ID number unavailable');
+      setText('organization', person.organization, 'Not provided');
+      setText('type', person.type, 'Not provided');
+      setText('classDepartment', person.classDepartment, 'Not provided');
+
+      const initialsBox = document.getElementById('initials');
+      const photo = document.getElementById('photo');
+
+      initialsBox.textContent = getInitials(person.name);
+      initialsBox.style.display = 'grid';
+
+      photo.onload = function () {
+        photo.style.display = 'block';
+        initialsBox.style.display = 'none';
+      };
+
+      photo.onerror = function () {
+        photo.style.display = 'none';
+        initialsBox.style.display = 'grid';
+      };
+
+      if (
+        typeof person.photoUrl === 'string' &&
+        /^https?:\/\//i.test(person.photoUrl)
+      ) {
+        photo.src = person.photoUrl;
+        photo.alt = 'Photo of ' + (person.name || 'ID holder');
+      } else {
+        photo.removeAttribute('src');
+        photo.style.display = 'none';
+      }
+
+      document.getElementById('classRow')
+        .classList.toggle(
+          'hidden',
+          !person.classDepartment
+        );
+
+      messageCard.classList.add('hidden');
+      profileCard.classList.remove('hidden');
+
+      document.title =
+        (person.name ? person.name + ' · ' : '') +
+        'Digital ID Verification';
+    }
+
+    function cleanupRequest() {
+      if (requestTimer) {
+        clearTimeout(requestTimer);
+        requestTimer = null;
+      }
+
+      if (requestScript) {
+        requestScript.remove();
+        requestScript = null;
+      }
+
+      delete window.digitalIdResponse;
+    }
+
+    function verifyID() {
+      cleanupRequest();
+      const myRequestId = ++requestId;
+
+      if (!/^[a-f0-9]{32}$/i.test(token)) {
+        showMessage(
+          '!',
+          'Invalid QR Code',
+          'This link does not contain a valid ID token. Scan the QR code again.',
+          false
+        );
+        return;
+      }
+
+      showMessage(
+        '…',
+        'Checking ID',
+        'Connecting to the identity verification service.',
+        false
+      );
+
+      window.digitalIdResponse = function (data) {
+        if (myRequestId !== requestId) return;
+
+        cleanupRequest();
+        showProfile(data);
+      };
+
+      requestScript = document.createElement('script');
+
+      const query = new URLSearchParams({
+        token: token,
+        callback: 'digitalIdResponse',
+        cacheBust: String(Date.now())
+      });
+
+      requestScript.src = API_ENDPOINT + '?' + query.toString();
+
+      requestScript.onerror = function () {
+        if (myRequestId !== requestId) return;
+
+        cleanupRequest();
+
+        showMessage(
+          '!',
+          'Verification Unavailable',
+          'We could not reach the verification service. Check your internet connection and try again.',
+          true
+        );
+      };
+
+      document.head.appendChild(requestScript);
+
+      requestTimer = setTimeout(function () {
+        if (myRequestId !== requestId) return;
+
+        cleanupRequest();
+
+        showMessage(
+          '!',
+          'Request Timed Out',
+          'The verification service took too long to respond. Please try again.',
+          true
+        );
+      }, 20000);
+    }
+
+    retryButton.addEventListener('click', verifyID);
+
+    verifyID();
+  </script>
+</body>
+</html>
